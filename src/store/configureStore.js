@@ -1,6 +1,7 @@
-import {createStore, combineReducers} from 'redux';
+import {createStore, combineReducers, applyMiddleware} from 'redux';
 import expenseReducer from '../reducers/expenses'
 import filtersReducer from '../reducers/filters'
+import thunk from 'redux-thunk'
 
 //Store
 export default () => {
@@ -8,7 +9,8 @@ export default () => {
         combineReducers({
             expenses: expenseReducer,
             filters: filtersReducer
-        })
+        }),
+        applyMiddleware(thunk)
     )
     return store
 }

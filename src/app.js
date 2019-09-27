@@ -9,19 +9,13 @@ import 'normalize.css/normalize.css'
 import './styles/styles.scss'
 
 import configureStore from './store/configureStore'
-import {addExpense} from './actions/expenses'
+import {startSetExpenses} from './actions/expenses'
 import { setTextFilter } from './actions/filters'
 import getVisibleExpenses from './selectors/expenses'
+import './firebase/firebase'
 
 const store = configureStore();
 
-store.dispatch(addExpense({description: 'Water Bill', amount: 24500}))
-store.dispatch(addExpense({description: 'Gas Bill', createdAt: 100}))
-store.dispatch(addExpense({description: 'Rent', amount:28989}))
-
-const state = store.getState();
-const visibleExpense = getVisibleExpenses(state.expenses, state.filters);
-console.log(visibleExpense)
 
 const jsx = (
      <Provider store={store}>  
@@ -29,7 +23,11 @@ const jsx = (
     </Provider>
 )   //Provider Provides the store to all the components
 
-ReactDOM.render(jsx, document.getElementById('app'))
+ReactDOM.render(<p>Loading ...</p>, document.getElementById('app'))
+
+store.dispatch(startSetExpenses()).then(() => {
+    ReactDOM.render(jsx, document.getElementById('app'))
+})
 
 //New Babel - 
 // Direct state defination
