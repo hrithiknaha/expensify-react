@@ -8,7 +8,8 @@ export const addExpense = (expense) => {
     }
 }
 export const startAddExpense = (expenseData = {}) => {
-    return(dispatch) => {
+    return(dispatch, getState) => {
+        const uid = getState().auth.uid
         const {
             description = '',
             note = '',
@@ -17,7 +18,7 @@ export const startAddExpense = (expenseData = {}) => {
         } = expenseData;
         const expense = {description, note, amount, createdAt}
 
-        database.ref('expense').push(expense).then((ref) => {
+        database.ref(`users/${uid}/expense`).push(expense).then((ref) => {
             dispatch(addExpense({
               id: ref.key,
               ...expense  
@@ -34,8 +35,9 @@ export const removeExpense = ({ id } = {}) => {
 }
 
 export const startRemoveExpense = ({ id } = {}) => {
-    return (dispatch) => {
-       return database.ref(`expense/${id}`).remove() .then(()=> {
+    return (dispatch, getState) => {
+        const uid = getState().auth.uid
+        return database.ref(`users/${uid}/expense/${id}`).remove() .then(()=> {
            dispatch(removeExpense({id}))
        })
     }
@@ -50,8 +52,9 @@ export const editExpense = (id, update) => {
 }
 
 export const startEditExpense = (id, update) => {
-    return (dispatch) => {
-        return database.ref(`expense/${id}`).update(update).then(() => {
+    return (dispatch, getState) => {
+        const uid = getState().auth.uid
+        return database.ref(`users/${uid}/expense/${id}`).update(update).then(() => {
             dispatch(editExpense(id, update))
         })
     }
@@ -65,8 +68,9 @@ export const setExpenses = (expenses) => {
 }
 
 export const startSetExpenses = () => {
-    return (dispatch) => {
-        return database.ref('expense').once('value').then((snapshot) => {
+    return (dispatch, getState) => {
+        const uid = getState().auth.uid
+        return database.ref(`users/${uid}/expense`).once('value').then((snapshot) => {
             const expenses = [];
             snapshot.forEach((childSnapshot) => {
                 expenses.push({
